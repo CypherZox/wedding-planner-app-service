@@ -1,0 +1,29 @@
+{
+  "bsonType": "object",
+  "additionalProperties": false,
+  "required": ["_id", "weddingId", "sv", "version", "createdAt", "updatedAt", "createdBy", "updatedBy", "kind", "phase", "title", "priority", "done", "assigneeIds", "order"],
+  "properties": {
+    "_id": { "bsonType": "objectId" },
+    "weddingId": { "bsonType": "objectId" },
+    "sv": { "bsonType": "int", "minimum": 1 },
+    "version": { "bsonType": "int", "minimum": 1 },
+    "createdAt": { "bsonType": "date" },
+    "updatedAt": { "bsonType": "date" },
+    "createdBy": { "bsonType": "objectId" },
+    "updatedBy": { "bsonType": "objectId" },
+    "deletedAt": { "bsonType": "date" },
+    "kind": { "bsonType": "string", "enum": ["checklist", "deadline"] },
+    "phase": { "bsonType": ["string", "null"], "enum": ["m12_plus", "m6_12", "m3_6", "m1_3", "w1_2", "w1", "d1", "wedding_day", null] },
+    "title": { "bsonType": "string", "maxLength": 200 },
+    "notes": { "bsonType": "string", "maxLength": 4000 },
+    "dueDate": { "bsonType": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$" },
+    "priority": { "bsonType": "int", "minimum": 1, "maximum": 5 },
+    "done": { "bsonType": "bool" },
+    "doneAt": { "bsonType": "date" },
+    "doneBy": { "bsonType": "objectId" },
+    "assigneeIds": { "bsonType": "array", "items": { "bsonType": "objectId" } },
+    "assigneeNote": { "bsonType": "string", "maxLength": 4000 },
+    "order": { "bsonType": "double" },
+    "templateKey": { "bsonType": "string", "maxLength": 80 }
+  }
+}

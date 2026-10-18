@@ -1,0 +1,24 @@
+{
+  "bsonType": "object",
+  "additionalProperties": false,
+  "required": ["_id", "weddingId", "sv", "version", "createdAt", "updatedAt", "createdBy", "updatedBy", "email", "role", "canViewBudget", "tokenHash", "invitedBy", "expiresAt"],
+  "properties": {
+    "_id": { "bsonType": "objectId" },
+    "weddingId": { "bsonType": "objectId" },
+    "sv": { "bsonType": "int", "minimum": 1 },
+    "version": { "bsonType": "int", "minimum": 1 },
+    "createdAt": { "bsonType": "date" },
+    "updatedAt": { "bsonType": "date" },
+    "createdBy": { "bsonType": "objectId" },
+    "updatedBy": { "bsonType": "objectId" },
+    "deletedAt": { "bsonType": "date" },
+    "email": { "bsonType": "string", "maxLength": 320, "pattern": "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$" },
+    "role": { "bsonType": "string", "enum": ["partner", "editor", "viewer"] },
+    "canViewBudget": { "bsonType": "bool" },
+    "tokenHash": { "bsonType": "binData" },
+    "invitedBy": { "bsonType": "objectId" },
+    "expiresAt": { "bsonType": "date" },
+    "acceptedAt": { "bsonType": "date" },
+    "acceptedBy": { "bsonType": "objectId" }
+  }
+}

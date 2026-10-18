@@ -1,0 +1,35 @@
+{
+  "bsonType": "object",
+  "additionalProperties": false,
+  "required": ["_id", "weddingId", "sv", "version", "createdAt", "updatedAt", "createdBy", "updatedBy", "owner", "storageKey", "mime", "bytes", "order", "status", "uploadedBy"],
+  "properties": {
+    "_id": { "bsonType": "objectId" },
+    "weddingId": { "bsonType": "objectId" },
+    "sv": { "bsonType": "int", "minimum": 1 },
+    "version": { "bsonType": "int", "minimum": 1 },
+    "createdAt": { "bsonType": "date" },
+    "updatedAt": { "bsonType": "date" },
+    "createdBy": { "bsonType": "objectId" },
+    "updatedBy": { "bsonType": "objectId" },
+    "deletedAt": { "bsonType": "date" },
+    "owner": {
+      "bsonType": "object",
+      "additionalProperties": false,
+      "required": ["type", "id"],
+      "properties": {
+        "type": { "bsonType": "string", "enum": ["vendor", "theme", "gallery", "song", "payment", "wedding"] },
+        "id": { "bsonType": "objectId" }
+      }
+    },
+    "storageKey": { "bsonType": "string", "maxLength": 300, "pattern": "^w/[a-f0-9]{24}/[a-f0-9]{24}\\.[a-z0-9]+$" },
+    "mime": { "bsonType": "string", "enum": ["image/jpeg", "image/png", "image/webp", "image/heic", "application/pdf", "audio/mpeg"] },
+    "bytes": { "bsonType": "long", "minimum": 0, "maximum": 15728640 },
+    "width": { "bsonType": "int", "minimum": 0 },
+    "height": { "bsonType": "int", "minimum": 0 },
+    "blurhash": { "bsonType": "string", "maxLength": 100 },
+    "caption": { "bsonType": "string", "maxLength": 1000 },
+    "order": { "bsonType": "int" },
+    "status": { "bsonType": "string", "enum": ["pending", "ready"] },
+    "uploadedBy": { "bsonType": "objectId" }
+  }
+}

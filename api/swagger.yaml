@@ -1,0 +1,460 @@
+basePath: /
+definitions:
+  AuthResponse:
+    properties:
+      session:
+        $ref: '#/definitions/Session'
+      user:
+        allOf:
+        - $ref: '#/definitions/User'
+        description: User is missing when the account was offboarded. POST /v1/me
+          restores it.
+    type: object
+  ConfirmationResponse:
+    properties:
+      confirmationRequired:
+        example: true
+        type: boolean
+    type: object
+  Error:
+    properties:
+      error:
+        $ref: '#/definitions/ErrorBody'
+    type: object
+  ErrorBody:
+    properties:
+      code:
+        example: not_found
+        type: string
+      details:
+        type: object
+      message:
+        example: user not found
+        type: string
+    type: object
+  LoginRequest:
+    properties:
+      email:
+        example: ada@example.com
+        type: string
+      password:
+        example: Correct-horse-9
+        type: string
+    type: object
+  OnboardRequest:
+    properties:
+      displayName:
+        example: Ada Lovelace
+        maxLength: 200
+        minLength: 1
+        type: string
+      locale:
+        example: en-US
+        maxLength: 35
+        type: string
+    type: object
+  RefreshRequest:
+    properties:
+      refreshToken:
+        type: string
+    type: object
+  RegisterRequest:
+    properties:
+      displayName:
+        example: Ada Lovelace
+        maxLength: 200
+        minLength: 1
+        type: string
+      email:
+        example: ada@example.com
+        type: string
+      locale:
+        example: en-US
+        maxLength: 35
+        type: string
+      password:
+        example: Correct-horse-9
+        type: string
+    type: object
+  Session:
+    properties:
+      accessToken:
+        type: string
+      expiresAt:
+        example: 1792339027
+        type: integer
+      expiresIn:
+        example: 3600
+        type: integer
+      refreshToken:
+        type: string
+      tokenType:
+        example: bearer
+        type: string
+    type: object
+  Status:
+    properties:
+      status:
+        example: ok
+        type: string
+    type: object
+  UpdateRequest:
+    properties:
+      displayName:
+        example: Ada Lovelace
+        maxLength: 200
+        minLength: 1
+        type: string
+      locale:
+        example: fr
+        maxLength: 35
+        type: string
+    type: object
+  User:
+    properties:
+      authProvider:
+        type: string
+      authUid:
+        type: string
+      avatarMediaKey:
+        type: string
+      createdAt:
+        type: string
+      displayName:
+        type: string
+      email:
+        type: string
+      emailVerified:
+        type: boolean
+      id:
+        type: string
+      lastSeenAt:
+        type: string
+      lastWeddingId:
+        type: string
+      locale:
+        type: string
+      updatedAt:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: Backend for the wedding planner app. Get a session from /v1/auth/login
+    or /v1/auth/register, then send its accessToken on the other routes.
+  title: Wedding Planner API
+  version: 0.1.0
+paths:
+  /healthz:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/Status'
+      summary: Process is running
+      tags:
+      - health
+  /readyz:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/Status'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/Error'
+      summary: MongoDB and Supabase Auth are reachable
+      tags:
+      - health
+  /v1/auth/login:
+    post:
+      consumes:
+      - application/json
+      description: 'Returns a Supabase session. Send accessToken as "Authorization:
+        Bearer <token>" on other routes, and use refreshToken with /v1/auth/refresh
+        before it expires.'
+      parameters:
+      - description: Credentials
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/AuthResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Error'
+        "401":
+          description: Wrong email or password
+          schema:
+            $ref: '#/definitions/Error'
+        "403":
+          description: Email not confirmed
+          schema:
+            $ref: '#/definitions/Error'
+        "429":
+          description: Too Many Requests
+          schema:
+            $ref: '#/definitions/Error'
+      summary: Log in with email and password
+      tags:
+      - auth
+  /v1/auth/logout:
+    post:
+      description: Revokes the refresh tokens. The access token keeps working until
+        it expires, so the app should delete both.
+      parameters:
+      - default: local
+        description: Which sessions to end
+        enum:
+        - local
+        - global
+        - others
+        in: query
+        name: scope
+        type: string
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Error'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Error'
+      security:
+      - SupabaseToken: []
+      summary: Log out
+      tags:
+      - auth
+  /v1/auth/refresh:
+    post:
+      consumes:
+      - application/json
+      description: Each refresh token works once. Store the new refreshToken from
+        the response.
+      parameters:
+      - description: Refresh token
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/RefreshRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/Session'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Error'
+        "401":
+          description: Refresh token is invalid or already used
+          schema:
+            $ref: '#/definitions/Error'
+        "429":
+          description: Too Many Requests
+          schema:
+            $ref: '#/definitions/Error'
+      summary: Refresh the session
+      tags:
+      - auth
+  /v1/auth/register:
+    post:
+      consumes:
+      - application/json
+      description: Creates the Supabase Auth user and the app user. When the project
+        requires email confirmation, no session is returned until the user confirms
+        and logs in.
+      parameters:
+      - description: Account
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/RegisterRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Signed up and signed in
+          schema:
+            $ref: '#/definitions/AuthResponse'
+        "202":
+          description: Check email to confirm, then log in
+          schema:
+            $ref: '#/definitions/ConfirmationResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Error'
+        "403":
+          description: Sign-ups are disabled
+          schema:
+            $ref: '#/definitions/Error'
+        "409":
+          description: Email already registered
+          schema:
+            $ref: '#/definitions/Error'
+        "422":
+          description: Invalid email, weak password, or bad profile
+          schema:
+            $ref: '#/definitions/Error'
+        "429":
+          description: Too Many Requests
+          schema:
+            $ref: '#/definitions/Error'
+      summary: Register with email and password
+      tags:
+      - auth
+  /v1/me:
+    delete:
+      description: Soft-deletes the user in this API. The Supabase Auth user is not
+        deleted.
+      responses:
+        "204":
+          description: No Content
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Error'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/Error'
+      security:
+      - SupabaseToken: []
+      summary: Offboard the signed-in user
+      tags:
+      - account
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/User'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Error'
+        "404":
+          description: Not onboarded, or offboarded
+          schema:
+            $ref: '#/definitions/Error'
+      security:
+      - SupabaseToken: []
+      summary: Get the signed-in user
+      tags:
+      - account
+    patch:
+      consumes:
+      - application/json
+      parameters:
+      - description: Fields to change
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/UpdateRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/User'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Error'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Error'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/Error'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/Error'
+      security:
+      - SupabaseToken: []
+      summary: Update the signed-in user's profile
+      tags:
+      - account
+    post:
+      consumes:
+      - application/json
+      description: Creates the user from the Supabase token. Calling it again returns
+        the existing user, and calling it after offboarding restores that user.
+      parameters:
+      - description: Profile
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/OnboardRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Existing or restored user
+          schema:
+            $ref: '#/definitions/User'
+        "201":
+          description: User created
+          schema:
+            $ref: '#/definitions/User'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Error'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Error'
+        "409":
+          description: Email belongs to another account
+          schema:
+            $ref: '#/definitions/Error'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/Error'
+      security:
+      - SupabaseToken: []
+      summary: Onboard the signed-in user
+      tags:
+      - account
+schemes:
+- http
+securityDefinitions:
+  SupabaseToken:
+    description: Supabase Auth access token, sent as "Bearer <token>".
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

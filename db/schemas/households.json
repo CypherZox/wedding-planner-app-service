@@ -1,0 +1,44 @@
+{
+  "bsonType": "object",
+  "additionalProperties": false,
+  "required": ["_id", "weddingId", "sv", "version", "createdAt", "updatedAt", "createdBy", "updatedBy", "name", "plusOnesAllowed"],
+  "properties": {
+    "_id": { "bsonType": "objectId" },
+    "weddingId": { "bsonType": "objectId" },
+    "sv": { "bsonType": "int", "minimum": 1 },
+    "version": { "bsonType": "int", "minimum": 1 },
+    "createdAt": { "bsonType": "date" },
+    "updatedAt": { "bsonType": "date" },
+    "createdBy": { "bsonType": "objectId" },
+    "updatedBy": { "bsonType": "objectId" },
+    "deletedAt": { "bsonType": "date" },
+    "name": { "bsonType": "string", "maxLength": 200 },
+    "address": {
+      "bsonType": "object",
+      "additionalProperties": false,
+      "required": ["line1", "city", "country"],
+      "properties": {
+        "line1": { "bsonType": "string", "maxLength": 200 },
+        "line2": { "bsonType": "string", "maxLength": 200 },
+        "city": { "bsonType": "string", "maxLength": 200 },
+        "region": { "bsonType": "string", "maxLength": 200 },
+        "postalCode": { "bsonType": "string", "maxLength": 32 },
+        "country": { "bsonType": "string", "pattern": "^[A-Z]{2}$" }
+      }
+    },
+    "rsvpToken": {
+      "bsonType": "object",
+      "additionalProperties": false,
+      "required": ["hash", "createdAt"],
+      "properties": {
+        "hash": { "bsonType": "binData" },
+        "createdAt": { "bsonType": "date" },
+        "revokedAt": { "bsonType": "date" },
+        "lastUsedAt": { "bsonType": "date" }
+      }
+    },
+    "plusOnesAllowed": { "bsonType": "int", "minimum": 0, "maximum": 5 },
+    "respondedAt": { "bsonType": "date" },
+    "notes": { "bsonType": "string", "maxLength": 4000 }
+  }
+}

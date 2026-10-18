@@ -1,0 +1,20 @@
+{
+  "bsonType": "object",
+  "additionalProperties": false,
+  "required": ["_id", "authProvider", "authUid", "email", "emailVerified", "displayName", "locale", "lastSeenAt", "createdAt", "updatedAt"],
+  "properties": {
+    "_id": { "bsonType": "objectId" },
+    "authProvider": { "bsonType": "string", "enum": ["supabase"] },
+    "authUid": { "bsonType": "string", "minLength": 1, "maxLength": 128 },
+    "email": { "bsonType": "string", "maxLength": 320, "pattern": "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$" },
+    "emailVerified": { "bsonType": "bool" },
+    "displayName": { "bsonType": "string", "maxLength": 200 },
+    "avatarMediaKey": { "bsonType": "string", "maxLength": 300 },
+    "locale": { "bsonType": "string", "minLength": 2, "maxLength": 35 },
+    "lastWeddingId": { "bsonType": "objectId" },
+    "lastSeenAt": { "bsonType": "date" },
+    "createdAt": { "bsonType": "date" },
+    "updatedAt": { "bsonType": "date" },
+    "deletedAt": { "bsonType": "date" }
+  }
+}

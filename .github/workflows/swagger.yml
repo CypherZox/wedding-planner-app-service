@@ -1,0 +1,35 @@
+name: Publish API docs
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    env:
+      SWAGGERHUB_API_KEY: ${{ secrets.SWAGGERHUB_API_KEY }}
+      API: ${{ vars.SWAGGERHUB_OWNER }}/wedding-planner-api
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Generate spec from code
+        run: make docs
+
+      - name: Push to SwaggerHub
+        run: |
+          npm install --global swaggerhub-cli@0.10.0
+          if swaggerhub api:get "$API" > /dev/null 2>&1; then
+            swaggerhub api:update "$API" -f api/swagger.yaml --visibility private
+          else
+            swaggerhub api:create "$API" -f api/swagger.yaml --visibility private --setdefault
+          fi

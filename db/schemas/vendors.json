@@ -1,0 +1,90 @@
+{
+  "bsonType": "object",
+  "additionalProperties": false,
+  "required": ["_id", "weddingId", "sv", "version", "createdAt", "updatedAt", "createdBy", "updatedBy", "type", "categoryId", "name", "priceMinor", "status", "isSelected"],
+  "properties": {
+    "_id": { "bsonType": "objectId" },
+    "weddingId": { "bsonType": "objectId" },
+    "sv": { "bsonType": "int", "minimum": 1 },
+    "version": { "bsonType": "int", "minimum": 1 },
+    "createdAt": { "bsonType": "date" },
+    "updatedAt": { "bsonType": "date" },
+    "createdBy": { "bsonType": "objectId" },
+    "updatedBy": { "bsonType": "objectId" },
+    "deletedAt": { "bsonType": "date" },
+    "type": { "bsonType": "string", "enum": ["vendor", "venue"] },
+    "categoryId": { "bsonType": "string", "pattern": "^[0-9A-Za-z]{8}$" },
+    "budgetCategoryId": { "bsonType": "string", "pattern": "^[0-9A-Za-z]{8}$" },
+    "name": { "bsonType": "string", "maxLength": 200 },
+    "contactName": { "bsonType": "string", "maxLength": 200 },
+    "phone": { "bsonType": "string", "pattern": "^\\+[1-9]\\d{6,14}$" },
+    "email": { "bsonType": "string", "maxLength": 320, "pattern": "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$" },
+    "website": { "bsonType": "string", "maxLength": 2048 },
+    "packageName": { "bsonType": "string", "maxLength": 200 },
+    "priceMinor": { "bsonType": "long" },
+    "status": { "bsonType": "string", "enum": ["considering", "contacted", "booked", "declined"] },
+    "isSelected": { "bsonType": "bool" },
+    "coverMediaId": { "bsonType": "objectId" },
+    "notes": { "bsonType": "string", "maxLength": 4000 },
+    "venue": {
+      "bsonType": "object",
+      "additionalProperties": false,
+      "required": ["costs", "pros", "cons"],
+      "properties": {
+        "address": { "bsonType": "string", "maxLength": 400 },
+        "geo": {
+          "bsonType": "object",
+          "additionalProperties": false,
+          "required": ["type", "coordinates"],
+          "properties": {
+            "type": { "bsonType": "string", "enum": ["Point"] },
+            "coordinates": {
+              "bsonType": "array",
+              "minItems": 2,
+              "maxItems": 2,
+              "items": { "bsonType": ["double", "int", "long"] }
+            }
+          }
+        },
+        "capacity": {
+          "bsonType": "object",
+          "additionalProperties": false,
+          "properties": {
+            "seated": { "bsonType": "int", "minimum": 0 },
+            "standing": { "bsonType": "int", "minimum": 0 }
+          }
+        },
+        "costs": {
+          "bsonType": "array",
+          "maxItems": 30,
+          "items": {
+            "bsonType": "object",
+            "additionalProperties": false,
+            "required": ["type", "amountMinor"],
+            "properties": {
+              "type": { "bsonType": "string", "enum": ["venue_fee", "ceremony_fee", "food_drinks", "alcohol", "rentals", "corkage", "cake_cutting", "parking", "tax_service", "insurance", "valet", "other"] },
+              "label": { "bsonType": "string", "maxLength": 200 },
+              "amountMinor": { "bsonType": "long" }
+            }
+          }
+        },
+        "pros": { "bsonType": "array", "maxItems": 20, "items": { "bsonType": "string", "maxLength": 200 } },
+        "cons": { "bsonType": "array", "maxItems": 20, "items": { "bsonType": "string", "maxLength": 200 } }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "oneOf": [
+        {
+          "properties": { "type": { "enum": ["vendor"] } },
+          "not": { "required": ["venue"] }
+        },
+        {
+          "properties": { "type": { "enum": ["venue"] } },
+          "required": ["venue"]
+        }
+      ]
+    }
+  ]
+}

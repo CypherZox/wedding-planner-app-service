@@ -1,0 +1,87 @@
+{
+  "bsonType": "object",
+  "additionalProperties": false,
+  "required": ["_id", "weddingId", "sv", "version", "createdAt", "updatedAt", "createdBy", "updatedBy", "householdId", "firstName", "lastName", "sortName", "isHouseholdContact", "ageGroup", "isPlusOne", "tagIds", "saveTheDate", "invitation", "rsvp", "giftReceived"],
+  "properties": {
+    "_id": { "bsonType": "objectId" },
+    "weddingId": { "bsonType": "objectId" },
+    "sv": { "bsonType": "int", "minimum": 1 },
+    "version": { "bsonType": "int", "minimum": 1 },
+    "createdAt": { "bsonType": "date" },
+    "updatedAt": { "bsonType": "date" },
+    "createdBy": { "bsonType": "objectId" },
+    "updatedBy": { "bsonType": "objectId" },
+    "deletedAt": { "bsonType": "date" },
+    "householdId": { "bsonType": "objectId" },
+    "firstName": { "bsonType": "string", "maxLength": 200 },
+    "lastName": { "bsonType": "string", "maxLength": 200 },
+    "sortName": { "bsonType": "string", "maxLength": 401 },
+    "isHouseholdContact": { "bsonType": "bool" },
+    "ageGroup": { "bsonType": "string", "enum": ["adult", "child", "infant"] },
+    "isPlusOne": { "bsonType": "bool" },
+    "tagIds": { "bsonType": "array", "maxItems": 10, "items": { "bsonType": "string", "pattern": "^[0-9A-Za-z]{8}$" } },
+    "saveTheDate": {
+      "bsonType": "object",
+      "additionalProperties": false,
+      "required": ["sent"],
+      "properties": {
+        "sent": { "bsonType": "bool" },
+        "sentAt": { "bsonType": "date" }
+      }
+    },
+    "invitation": {
+      "bsonType": "object",
+      "additionalProperties": false,
+      "required": ["sent"],
+      "properties": {
+        "sent": { "bsonType": "bool" },
+        "sentAt": { "bsonType": "date" }
+      }
+    },
+    "rsvp": {
+      "bsonType": "object",
+      "additionalProperties": false,
+      "required": ["status"],
+      "properties": {
+        "status": { "bsonType": "string", "enum": ["pending", "attending", "declined"] },
+        "respondedAt": { "bsonType": "date" },
+        "via": { "bsonType": "string", "enum": ["couple", "guest_link"] }
+      }
+    },
+    "accommodationId": { "bsonType": "string", "pattern": "^[0-9A-Za-z]{8}$" },
+    "phone": { "bsonType": "string", "pattern": "^\\+[1-9]\\d{6,14}$" },
+    "email": { "bsonType": "string", "maxLength": 320, "pattern": "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$" },
+    "meal": {
+      "bsonType": "object",
+      "additionalProperties": false,
+      "properties": {
+        "choiceId": { "bsonType": "string", "pattern": "^[0-9A-Za-z]{8}$" },
+        "dietary": { "bsonType": "array", "maxItems": 10, "items": { "bsonType": "string", "maxLength": 200 } },
+        "allergyNote": { "bsonType": "string", "maxLength": 4000 }
+      }
+    },
+    "seat": {
+      "bsonType": "object",
+      "additionalProperties": false,
+      "required": ["tableId", "seatNo"],
+      "properties": {
+        "tableId": { "bsonType": "objectId" },
+        "seatNo": { "bsonType": "int", "minimum": 1, "maximum": 30 }
+      }
+    },
+    "giftReceived": { "bsonType": "bool" },
+    "extra": {
+      "bsonType": "array",
+      "maxItems": 10,
+      "items": {
+        "bsonType": "object",
+        "additionalProperties": false,
+        "required": ["label", "value"],
+        "properties": {
+          "label": { "bsonType": "string", "maxLength": 200 },
+          "value": { "bsonType": "string", "maxLength": 1000 }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,226 @@
+{
+  "bsonType": "object",
+  "additionalProperties": false,
+  "required": ["_id", "sv", "version", "createdAt", "updatedAt", "createdBy", "updatedBy", "title", "partners", "date", "timezone", "location", "currency", "currencyDecimals", "status", "members", "lists", "budget", "rsvp"],
+  "properties": {
+    "_id": { "bsonType": "objectId" },
+    "sv": { "bsonType": "int", "minimum": 1 },
+    "version": { "bsonType": "int", "minimum": 1 },
+    "createdAt": { "bsonType": "date" },
+    "updatedAt": { "bsonType": "date" },
+    "createdBy": { "bsonType": "objectId" },
+    "updatedBy": { "bsonType": "objectId" },
+    "deletedAt": { "bsonType": "date" },
+    "title": { "bsonType": "string", "maxLength": 200 },
+    "partners": {
+      "bsonType": "array",
+      "minItems": 2,
+      "maxItems": 2,
+      "items": {
+        "bsonType": "object",
+        "additionalProperties": false,
+        "required": ["key", "firstName", "lastName", "label"],
+        "properties": {
+          "key": { "bsonType": "string", "enum": ["p1", "p2"] },
+          "firstName": { "bsonType": "string", "maxLength": 200 },
+          "lastName": { "bsonType": "string", "maxLength": 200 },
+          "label": { "bsonType": "string", "enum": ["bride", "groom", "partner"] }
+        }
+      }
+    },
+    "date": { "bsonType": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$" },
+    "timezone": { "bsonType": "string", "minLength": 1, "maxLength": 64 },
+    "location": {
+      "bsonType": "object",
+      "additionalProperties": false,
+      "required": ["name", "city", "country"],
+      "properties": {
+        "name": { "bsonType": "string", "maxLength": 200 },
+        "city": { "bsonType": "string", "maxLength": 200 },
+        "country": { "bsonType": "string", "pattern": "^[A-Z]{2}$" },
+        "geo": {
+          "bsonType": "object",
+          "additionalProperties": false,
+          "required": ["type", "coordinates"],
+          "properties": {
+            "type": { "bsonType": "string", "enum": ["Point"] },
+            "coordinates": {
+              "bsonType": "array",
+              "minItems": 2,
+              "maxItems": 2,
+              "items": [
+                { "bsonType": ["double", "int", "long"], "minimum": -180, "maximum": 180 },
+                { "bsonType": ["double", "int", "long"], "minimum": -90, "maximum": 90 }
+              ]
+            }
+          }
+        }
+      }
+    },
+    "currency": { "bsonType": "string", "pattern": "^[A-Z]{3}$" },
+    "currencyDecimals": { "bsonType": "int", "minimum": 0, "maximum": 4 },
+    "status": { "bsonType": "string", "enum": ["planning", "done", "archived"] },
+    "members": {
+      "bsonType": "array",
+      "maxItems": 20,
+      "items": {
+        "bsonType": "object",
+        "additionalProperties": false,
+        "required": ["userId", "role", "partnerKey", "canViewBudget", "displayName", "joinedAt"],
+        "properties": {
+          "userId": { "bsonType": "objectId" },
+          "role": { "bsonType": "string", "enum": ["owner", "partner", "editor", "viewer"] },
+          "partnerKey": { "bsonType": ["string", "null"], "enum": ["p1", "p2", null] },
+          "canViewBudget": { "bsonType": "bool" },
+          "displayName": { "bsonType": "string", "maxLength": 200 },
+          "joinedAt": { "bsonType": "date" }
+        }
+      }
+    },
+    "lists": {
+      "bsonType": "object",
+      "additionalProperties": false,
+      "required": ["guestTags", "accommodations", "partyRoles", "musicCategories", "mealChoices", "vendorCategories"],
+      "properties": {
+        "guestTags": {
+          "bsonType": "array",
+          "maxItems": 50,
+          "items": {
+            "bsonType": "object",
+            "additionalProperties": false,
+            "required": ["id", "name", "order"],
+            "properties": {
+              "id": { "bsonType": "string", "pattern": "^[0-9A-Za-z]{8}$" },
+              "name": { "bsonType": "string", "maxLength": 200 },
+              "order": { "bsonType": "int" },
+              "color": { "bsonType": "string", "maxLength": 32 }
+            }
+          }
+        },
+        "accommodations": {
+          "bsonType": "array",
+          "maxItems": 30,
+          "items": {
+            "bsonType": "object",
+            "additionalProperties": false,
+            "required": ["id", "name", "order"],
+            "properties": {
+              "id": { "bsonType": "string", "pattern": "^[0-9A-Za-z]{8}$" },
+              "name": { "bsonType": "string", "maxLength": 200 },
+              "order": { "bsonType": "int" }
+            }
+          }
+        },
+        "partyRoles": {
+          "bsonType": "array",
+          "maxItems": 30,
+          "items": {
+            "bsonType": "object",
+            "additionalProperties": false,
+            "required": ["id", "name", "order"],
+            "properties": {
+              "id": { "bsonType": "string", "pattern": "^[0-9A-Za-z]{8}$" },
+              "name": { "bsonType": "string", "maxLength": 200 },
+              "order": { "bsonType": "int" }
+            }
+          }
+        },
+        "musicCategories": {
+          "bsonType": "array",
+          "maxItems": 30,
+          "items": {
+            "bsonType": "object",
+            "additionalProperties": false,
+            "required": ["id", "name", "order"],
+            "properties": {
+              "id": { "bsonType": "string", "pattern": "^[0-9A-Za-z]{8}$" },
+              "name": { "bsonType": "string", "maxLength": 200 },
+              "order": { "bsonType": "int" }
+            }
+          }
+        },
+        "mealChoices": {
+          "bsonType": "array",
+          "maxItems": 20,
+          "items": {
+            "bsonType": "object",
+            "additionalProperties": false,
+            "required": ["id", "name"],
+            "properties": {
+              "id": { "bsonType": "string", "pattern": "^[0-9A-Za-z]{8}$" },
+              "name": { "bsonType": "string", "maxLength": 200 },
+              "description": { "bsonType": "string", "maxLength": 1000 }
+            }
+          }
+        },
+        "vendorCategories": {
+          "bsonType": "array",
+          "maxItems": 60,
+          "items": {
+            "bsonType": "object",
+            "additionalProperties": false,
+            "required": ["id", "key", "name", "group", "order"],
+            "properties": {
+              "id": { "bsonType": "string", "pattern": "^[0-9A-Za-z]{8}$" },
+              "key": { "bsonType": "string", "pattern": "^[a-z][a-z0-9_]{0,63}$" },
+              "name": { "bsonType": "string", "maxLength": 200 },
+              "group": { "bsonType": "string", "enum": ["planning", "venue_logistics", "food_drinks", "design", "photo_entertainment", "attire_beauty", "other"] },
+              "order": { "bsonType": "int" },
+              "budgetCategoryId": { "bsonType": "string", "pattern": "^[0-9A-Za-z]{8}$" }
+            }
+          }
+        }
+      }
+    },
+    "budget": {
+      "bsonType": "object",
+      "additionalProperties": false,
+      "required": ["contributors", "categories"],
+      "properties": {
+        "contributors": {
+          "bsonType": "array",
+          "maxItems": 20,
+          "items": {
+            "bsonType": "object",
+            "additionalProperties": false,
+            "required": ["id", "name", "amountMinor", "isCouple"],
+            "properties": {
+              "id": { "bsonType": "string", "pattern": "^[0-9A-Za-z]{8}$" },
+              "name": { "bsonType": "string", "maxLength": 200 },
+              "amountMinor": { "bsonType": "long" },
+              "isCouple": { "bsonType": "bool" }
+            }
+          }
+        },
+        "categories": {
+          "bsonType": "array",
+          "maxItems": 60,
+          "items": {
+            "bsonType": "object",
+            "additionalProperties": false,
+            "required": ["id", "name", "plannedMinor", "order"],
+            "properties": {
+              "id": { "bsonType": "string", "pattern": "^[0-9A-Za-z]{8}$" },
+              "name": { "bsonType": "string", "maxLength": 200 },
+              "plannedMinor": { "bsonType": "long" },
+              "order": { "bsonType": "int" }
+            }
+          }
+        }
+      }
+    },
+    "rsvp": {
+      "bsonType": "object",
+      "additionalProperties": false,
+      "required": ["enabled", "askMeal", "askDietary", "allowPlusOnes"],
+      "properties": {
+        "enabled": { "bsonType": "bool" },
+        "deadline": { "bsonType": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$" },
+        "message": { "bsonType": "string", "maxLength": 4000 },
+        "askMeal": { "bsonType": "bool" },
+        "askDietary": { "bsonType": "bool" },
+        "allowPlusOnes": { "bsonType": "bool" }
+      }
+    }
+  }
+}

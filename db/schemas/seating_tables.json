@@ -1,0 +1,32 @@
+{
+  "bsonType": "object",
+  "additionalProperties": false,
+  "required": ["_id", "weddingId", "sv", "version", "createdAt", "updatedAt", "createdBy", "updatedBy", "name", "number", "kind", "capacity", "order"],
+  "properties": {
+    "_id": { "bsonType": "objectId" },
+    "weddingId": { "bsonType": "objectId" },
+    "sv": { "bsonType": "int", "minimum": 1 },
+    "version": { "bsonType": "int", "minimum": 1 },
+    "createdAt": { "bsonType": "date" },
+    "updatedAt": { "bsonType": "date" },
+    "createdBy": { "bsonType": "objectId" },
+    "updatedBy": { "bsonType": "objectId" },
+    "deletedAt": { "bsonType": "date" },
+    "name": { "bsonType": "string", "maxLength": 200 },
+    "number": { "bsonType": "int" },
+    "kind": { "bsonType": "string", "enum": ["head", "round", "rect", "other"] },
+    "capacity": { "bsonType": "int", "minimum": 1, "maximum": 30 },
+    "order": { "bsonType": "int" },
+    "layout": {
+      "bsonType": "object",
+      "additionalProperties": false,
+      "required": ["x", "y", "rotation"],
+      "properties": {
+        "x": { "bsonType": ["double", "int", "long"] },
+        "y": { "bsonType": ["double", "int", "long"] },
+        "rotation": { "bsonType": ["double", "int", "long"] }
+      }
+    },
+    "notes": { "bsonType": "string", "maxLength": 4000 }
+  }
+}

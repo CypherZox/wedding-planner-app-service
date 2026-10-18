@@ -1,0 +1,22 @@
+services:
+  mongo:
+    image: mongodb/mongodb-community-server:9.0-ubi9
+    ports:
+      - "27017:27017"
+    command: ["mongod", "--replSet", "rs0", "--bind_ip_all"]
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - >
+          mongosh --quiet --eval
+          'try { if (rs.status().ok) quit(0) } catch (e) {}
+          rs.initiate({_id:"rs0", members:[{_id:0, host:"127.0.0.1:27017"}]})'
+      interval: 5s
+      timeout: 20s
+      retries: 20
+      start_period: 10s
+    volumes:
+      - mongo_data:/data/db
+
+volumes:
+  mongo_data:
